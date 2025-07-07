@@ -24,13 +24,14 @@ import sk.kuchta.eshop.api.dto.user.userAddress.response.UserAddressResponse;
 import sk.kuchta.eshop.api.dto.user.userDetail.request.UserDetailSaveRequest;
 import sk.kuchta.eshop.api.dto.user.userDetail.response.UserDetailResponse;
 import sk.kuchta.eshop.api.exception.response.ApiErrorResponse;
+import sk.kuchta.eshop.implementation.entity.user.UserDetail;
 
 import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @TestPropertySource("classpath:application-test.properties")
-public class UserAccountIntegrationTest {
+public class UserIntegrationTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -203,7 +204,6 @@ public class UserAccountIntegrationTest {
                 ApiErrorResponse.class
         );
         Assertions.assertEquals(HttpStatus.NOT_FOUND, notFoundResponseDetail.getStatusCode());
-
     }
 
     public ResponseEntity<UserAccountPasswordEditResponse> passwordChangeRequest(String oldPassword, String newPassword, String phoneNumber) {
@@ -242,9 +242,9 @@ public class UserAccountIntegrationTest {
         return response;
     }
 
-    public UserAccountSaveResponse saveUserAccount(String email, String password, HttpStatus expectedStatus, String phoneNumber) {
+    public UserAccountSaveResponse saveUserAccount(String email, String password, String phoneNumber) {
         UserAddressSaveRequest address = new UserAddressSaveRequest("street", "city", "country", 0, true);
-        UserDetailSaveRequest detail = new UserDetailSaveRequest("name", phoneNumber);
+        UserDetailSaveRequest detail = createUserDetail("name", phoneNumber);
         final UserAccountSaveRequest userAccount = new UserAccountSaveRequest(email, password, detail, address);
 
         final HttpEntity<UserAccountSaveRequest> request = new HttpEntity<>(userAccount);
@@ -271,7 +271,7 @@ public class UserAccountIntegrationTest {
         Assertions.assertEquals(address.getCountry(), addressResponse.getFirst().getCountry());
         Assertions.assertEquals(address.isBillingAddress(), addressResponse.getFirst().isBillingAddress());
 
-        Assertions.assertEquals(expectedStatus, responseEntity.getStatusCode());
+        Assertions.assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         Assertions.assertNotNull(responseBody);
         Assertions.assertEquals(userAccount.getEmail(), responseBody.getUserAccountResponse().getEmail());
 
@@ -280,7 +280,7 @@ public class UserAccountIntegrationTest {
 
     public ResponseEntity<String> saveUserAccountExpectingError(String email, String password, HttpStatus expectedStatus) {
         UserAddressSaveRequest address = new UserAddressSaveRequest("street", "city", "country", 0, true);
-        UserDetailSaveRequest detail = new UserDetailSaveRequest("name", "0900000000");
+        UserDetailSaveRequest detail = createUserDetail("name", "090000");
         final UserAccountSaveRequest userAccount = new UserAccountSaveRequest(email, password, detail, address);
         final HttpEntity<UserAccountSaveRequest> request = new HttpEntity<>(userAccount);
 
@@ -296,12 +296,18 @@ public class UserAccountIntegrationTest {
         return responseEntity;
     }
 
-    public UserAccountSaveResponse saveUserAccount(String email, String password, String phoneNumber) {
-        return saveUserAccount(email, password, HttpStatus.CREATED, phoneNumber);
+    public UserAccountSaveResponse saveUserAccount() {
+        return saveUserAccount("email@mail.com", "password", "000000");
     }
 
-    public UserAccountSaveResponse saveUserAccount() {
-        return saveUserAccount("email@mail.com", "password", HttpStatus.CREATED, "000000");
+    private UserDetailSaveRequest createUserDetail(String name, String phoneNumber) {
+        UserDetailSaveRequest saveRequest = new UserDetailSaveRequest(name, phoneNumber);
+
+        Assertions.assertNotNull(saveRequest);
+        Assertions.assertEquals(name, saveRequest.getName());
+        Assertions.assertEquals(phoneNumber, saveRequest.getPhoneNumber());
+
+        return saveRequest;
     }
 
 

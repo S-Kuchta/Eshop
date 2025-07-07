@@ -35,13 +35,8 @@ public class UserAddressServiceImpl implements UserAddressService {
         ensureSingleBillingAddress(userAccount, request.isBillingAddress());
 
         try {
-            long id = repository.save(new UserAddress(
-                    request.getStreet(),
-                    request.getCity(),
-                    request.getCountry(),
-                    request.getZip(),
-                    request.isBillingAddress(),
-                    userAccount)
+            long id = repository.save(
+                    userAddressMapper.mapUserAddressSaveRequestToUserAddress(request)
             ).getId();
 
             return new UserAddressResponse(
@@ -96,11 +91,6 @@ public class UserAddressServiceImpl implements UserAddressService {
 
     @Override
     public List<UserAddressResponse> findAllByUserAccountId(long userAccountId) {
-//        return repository.findAllByUserAccountId(userAccountId)
-//                .stream()
-//                .map(userAddressMapper::mapUserAddressToResponse)
-//                .toList();
-
         return userAddressMapper.mapUserAddressToResponse(repository.findAllByUserAccountId(userAccountId));
     }
 
