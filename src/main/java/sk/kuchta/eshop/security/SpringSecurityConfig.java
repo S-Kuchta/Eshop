@@ -24,7 +24,9 @@ public class SpringSecurityConfig {
                                 "/v3/api-docs/**",
                                 "/v3/api-docs",
                                 "/swagger-resources/**",
-                                "/webjars/**"
+                                "/webjars/**",
+                                "/h2-console/**",
+                                "/h2/**"
                         ).permitAll()
                         .requestMatchers(
                                 "/user-account/**",
