@@ -1,5 +1,6 @@
 package sk.kuchta.eshop.implementation.entity.productSpecification;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import sk.kuchta.eshop.implementation.entity.product.Product;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Entity
@@ -26,13 +28,26 @@ public class ProductSpecification {
 
     @Column
     @Setter
-    private String type;
+    private String model;
 
     @ElementCollection
-    private Map<String, String> genericSpecificationMap;
+    @Nullable
+    private Map<String, String> genericSpecificationMap = new HashMap<>();
 
     @OneToOne(mappedBy = "specification")
+    @Setter
     private Product product;
 
+    public ProductSpecification(String brand, String model, @Nullable Map<String, String> genericSpecificationMap, Product product) {
+        this.brand = brand;
+        this.model = model;
+        this.genericSpecificationMap = genericSpecificationMap;
+        this.product = product;
+    }
 
+    public ProductSpecification(String brand, String model, @Nullable Map<String, String> genericSpecificationMap) {
+        this.brand = brand;
+        this.model = model;
+        this.genericSpecificationMap = genericSpecificationMap;
+    }
 }

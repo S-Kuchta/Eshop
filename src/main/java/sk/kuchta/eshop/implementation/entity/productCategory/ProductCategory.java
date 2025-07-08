@@ -1,4 +1,4 @@
-package sk.kuchta.eshop.implementation.entity.category;
+package sk.kuchta.eshop.implementation.entity.productCategory;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class Category {
+public class ProductCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,8 +30,8 @@ public class Category {
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
-    private Category parentCategory;
+    private ProductCategory parentProductCategory;
 
     @OneToMany(mappedBy = "parentCategory")
-    private List<Category> childrenCategory;
+    private List<ProductCategory> childrenProductCategory;
 }

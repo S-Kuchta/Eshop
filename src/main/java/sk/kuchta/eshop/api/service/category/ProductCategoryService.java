@@ -1,4 +1,4 @@
 package sk.kuchta.eshop.api.service.category;
 
-public interface CategoryService {
+public interface ProductCategoryService {
 }

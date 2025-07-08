@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import sk.kuchta.eshop.implementation.entity.category.Category;
+import sk.kuchta.eshop.implementation.entity.productCategory.ProductCategory;
 import sk.kuchta.eshop.implementation.entity.productSpecification.ProductSpecification;
 
 import java.util.HashSet;
@@ -39,13 +39,31 @@ public class Product {
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
-    private Set<Category> categories = new HashSet<>();
+    @Setter
+    private Set<ProductCategory> categories = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "product")
+    @Setter
     private ProductSpecification specification;
 
     @Column
     @Setter
     private String productCode;
+
+    public Product(String name, String description, int price, String productCode) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.productCode = productCode;
+    }
+
+    public Product(String name, String description, int price, Set<ProductCategory> categories, ProductSpecification specification, String productCode) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.categories = categories;
+        this.specification = specification;
+        this.productCode = productCode;
+    }
 }
