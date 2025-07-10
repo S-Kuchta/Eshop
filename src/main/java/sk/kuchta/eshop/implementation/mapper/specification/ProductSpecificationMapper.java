@@ -1,34 +1,37 @@
 package sk.kuchta.eshop.implementation.mapper.specification;
 
-import sk.kuchta.eshop.api.dto.specification.request.ProductSpecificationRequest;
-import sk.kuchta.eshop.api.dto.specification.response.ProductSpecificationResponse;
+import org.springframework.stereotype.Component;
+import sk.kuchta.eshop.api.dto.specification.ProductSpecificationDTO;
 import sk.kuchta.eshop.implementation.entity.product.Product;
 import sk.kuchta.eshop.implementation.entity.productSpecification.ProductSpecification;
 
+@Component
 public class ProductSpecificationMapper {
 
-    public ProductSpecification mapProductSpecificationSaveRequestToProductSpecification(ProductSpecificationRequest request) {
-        return new ProductSpecification(
-                request.getBrand(),
-                request.getModel(),
-                request.getGenericSpecificationMap()
-        );
-    }
 
-    public ProductSpecification mapProductSpecificationSaveRequestToProductSpecification(ProductSpecificationRequest request, Product product) {
-        return new ProductSpecification(
-                request.getBrand(),
-                request.getModel(),
-                request.getGenericSpecificationMap(),
-                product
-        );
-    }
 
-    public ProductSpecificationResponse mapProductSpecificationToProductSpecificationResponse(ProductSpecification productSpecification) {
-        return new ProductSpecificationResponse(
+    public ProductSpecificationDTO mapToProductSpecificationDTO(ProductSpecification productSpecification) {
+        return new ProductSpecificationDTO(
                 productSpecification.getBrand(),
                 productSpecification.getModel(),
                 productSpecification.getGenericSpecificationMap()
+        );
+    }
+
+    public ProductSpecification mapToProductSpecification(ProductSpecificationDTO productSpecificationDTO) {
+        return new ProductSpecification(
+                productSpecificationDTO.getBrand(),
+                productSpecificationDTO.getModel(),
+                productSpecificationDTO.getGenericSpecificationMap()
+        );
+    }
+
+    public ProductSpecification mapToProductSpecification(ProductSpecificationDTO productSpecificationDTO, Product product) {
+        return new ProductSpecification(
+                productSpecificationDTO.getBrand(),
+                productSpecificationDTO.getModel(),
+                productSpecificationDTO.getGenericSpecificationMap(),
+                product
         );
     }
 }

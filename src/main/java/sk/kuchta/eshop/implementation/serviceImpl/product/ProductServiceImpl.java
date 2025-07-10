@@ -1,74 +1,67 @@
 package sk.kuchta.eshop.implementation.serviceImpl.product;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
+import sk.kuchta.eshop.api.dto.product.ProductDTO;
 import sk.kuchta.eshop.api.dto.product.request.ProductSaveRequest;
 import sk.kuchta.eshop.api.dto.product.response.ProductSaveResponse;
-import sk.kuchta.eshop.api.dto.user.userAccount.response.UserAccountSaveResponse;
 import sk.kuchta.eshop.api.exception.InternalErrorException;
-import sk.kuchta.eshop.api.exception.ResourceExistInDatabase;
 import sk.kuchta.eshop.api.service.product.ProductService;
 import sk.kuchta.eshop.implementation.entity.product.Product;
-import sk.kuchta.eshop.implementation.entity.productCategory.ProductCategory;
+import sk.kuchta.eshop.implementation.entity.productCategory.Category;
 import sk.kuchta.eshop.implementation.entity.productSpecification.ProductSpecification;
-import sk.kuchta.eshop.implementation.entity.user.UserAccount;
-import sk.kuchta.eshop.implementation.entity.user.UserAddress;
-import sk.kuchta.eshop.implementation.entity.user.UserDetail;
+import sk.kuchta.eshop.implementation.mapper.product.ProductMapper;
 import sk.kuchta.eshop.implementation.mapper.specification.ProductSpecificationMapper;
 import sk.kuchta.eshop.implementation.repository.product.ProductRepository;
 
-import java.util.HashSet;
-
+@Service
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository repository;
     private final ProductSpecificationMapper specificationMapper;
+    private final ProductMapper productMapper;
 
-    public ProductServiceImpl(ProductRepository repository, ProductSpecificationMapper specificationMapper) {
+    private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
+
+    public ProductServiceImpl(ProductRepository repository, ProductSpecificationMapper specificationMapper, ProductMapper productMapper) {
         this.repository = repository;
         this.specificationMapper = specificationMapper;
+        this.productMapper = productMapper;
     }
 
     @Override
-    public ProductSaveResponse save(ProductSaveRequest request) {
+    public ProductSaveResponse save(ProductSaveRequest request, Category category) {
+        final ProductDTO productDTO = request.getProductDTO();
+
         try {
             Product product = new Product(
-                    request.getName(),
-                    request.getDescription(),
-                    request.getPrice(),
-//                    new HashSet<>(),
-//                    specificationMapper.mapProductSpecificationSaveRequestToProductSpecification(request.getSpecificationRequest()),
-                    request.getProductCode()
+                    productDTO.getName(),
+                    productDTO.getDescription(),
+                    productDTO.getPrice(),
+                    productDTO.getProductCode()
             );
 
-
-            ProductSpecification productSpecification = specificationMapper.mapProductSpecificationSaveRequestToProductSpecification(request.getSpecificationRequest());
+            final ProductSpecification productSpecification = specificationMapper.mapToProductSpecification(productDTO.getProductSpecificationDTO());
             productSpecification.setProduct(product);
             product.setSpecification(productSpecification);
 
-            ProductCategory productCategory = new ProductCategory();
-            productCategory.getProducts().add(product);
+            // TODO category
+            product.getCategories().add(category);
+            category.getProducts().add(product);
+//            final Category category = new Category();
+//            category.getProducts().add(product);
 
+            Product savedProduct = repository.save(product);
 
-            UserDetail userDetail = userDetailMapper.mapUserDetailToUser(request.getUserDetail());
-            userDetail.setUserAccount(userAccount);
-            userAccount.setUserDetail(userDetail);
-
-            UserAddress userAddress = userAddressMapper.mapUserAddressSaveRequestToUserAddress(request.getUserAddress());
-            userAddress.setUserAccount(userAccount);
-            userAccount.getUserAddress().add(userAddress);
-
-            UserAccount savedUserAccount = repository.save(userAccount);
-
-            return new UserAccountSaveResponse(
-                    "User account created successfully",
-                    userAccountMapper.mapUserAccountToResponse(savedUserAccount)
+            return new ProductSaveResponse(
+                    "Product created successfully",
+                    productMapper.toProductDTO(savedProduct)
             );
-        } catch (DataIntegrityViolationException e) {
-            throw new ResourceExistInDatabase("User with email " + request.getEmail() + " already exists");
         } catch (DataAccessException e) {
-            logger.error("Error while creating user account", e);
-            throw new InternalErrorException("Error while creating user account");
+            logger.error("Error while creating product", e);
+            throw new InternalErrorException("Error while creating product");
         }
     }
 

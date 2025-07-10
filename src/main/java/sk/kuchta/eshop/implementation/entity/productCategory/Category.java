@@ -15,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class ProductCategory {
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,8 +30,8 @@ public class ProductCategory {
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
-    private ProductCategory parentProductCategory;
+    private Category parentCategory;
 
     @OneToMany(mappedBy = "parentCategory")
-    private List<ProductCategory> childrenProductCategory;
+    private List<Category> childrenCategory;
 }

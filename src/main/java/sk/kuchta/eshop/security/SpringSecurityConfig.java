@@ -26,7 +26,8 @@ public class SpringSecurityConfig {
                                 "/swagger-resources/**",
                                 "/webjars/**",
                                 "/h2-console/**",
-                                "/h2/**"
+                                "/h2/**",
+                                "/h2-console/swagger-config"
                         ).permitAll()
                         .requestMatchers(
                                 "/user-account/**",
@@ -45,6 +46,7 @@ public class SpringSecurityConfig {
                         .permitAll()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
+                .headers(AbstractHttpConfigurer::disable)
                 .logout(LogoutConfigurer::permitAll);
 
         return http.build();

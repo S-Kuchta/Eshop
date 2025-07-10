@@ -12,15 +12,20 @@ import sk.kuchta.eshop.api.dto.specification.request.ProductSpecificationRequest
 import sk.kuchta.eshop.api.dto.specification.response.ProductSpecificationResponse;
 import sk.kuchta.eshop.api.dto.user.userAccount.response.UserAccountSaveResponse;
 import sk.kuchta.eshop.api.exception.response.ApiErrorResponse;
+import sk.kuchta.eshop.api.service.product.ProductService;
 import sk.kuchta.eshop.api.service.specification.ProductSpecificationService;
+import sk.kuchta.eshop.implementation.entity.product.Product;
 
 @RestController
 @RequestMapping("specification")
 public class ProductSpecificationController {
 
-    private ProductSpecificationService productSpecificationService;
+    private final ProductService productService;
+    private final ProductSpecificationService productSpecificationService;
 
-    public ProductSpecificationController(ProductSpecificationService productSpecificationService) {
+
+    public ProductSpecificationController(ProductService productService, ProductSpecificationService productSpecificationService) {
+        this.productService = productService;
         this.productSpecificationService = productSpecificationService;
     }
 
@@ -35,7 +40,8 @@ public class ProductSpecificationController {
     })
     @PostMapping("/create/{productId}")
     public ResponseEntity<ProductSpecificationResponse> save(@RequestBody ProductSpecificationRequest request, @PathVariable long productId) {
-        ProductSpecificationResponse response = productSpecificationService.save(request, );
+        Product product = productService.findByIdInternal(productId);
+        ProductSpecificationResponse response = productSpecificationService.save(request, product);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
