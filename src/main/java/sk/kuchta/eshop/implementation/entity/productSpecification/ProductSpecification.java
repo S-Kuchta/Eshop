@@ -31,21 +31,20 @@ public class ProductSpecification {
     private String model;
 
     @ElementCollection
-    @Nullable
     private Map<String, String> genericSpecificationMap = new HashMap<>();
 
     @OneToOne(mappedBy = "specification")
     @Setter
     private Product product;
 
-    public ProductSpecification(String brand, String model, @Nullable Map<String, String> genericSpecificationMap, Product product) {
+    public ProductSpecification(String brand, String model, Map<String, String> genericSpecificationMap, Product product) {
         this.brand = brand;
         this.model = model;
         this.genericSpecificationMap = genericSpecificationMap;
         this.product = product;
     }
 
-    public ProductSpecification(String brand, String model, @Nullable Map<String, String> genericSpecificationMap) {
+    public ProductSpecification(String brand, String model, Map<String, String> genericSpecificationMap) {
         this.brand = brand;
         this.model = model;
         this.genericSpecificationMap = genericSpecificationMap;

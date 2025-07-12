@@ -4,5 +4,5 @@ import sk.kuchta.eshop.implementation.entity.productCategory.Category;
 
 public interface CategoryService {
 
-    Category findByIdInternal();
+    Category findByIdInternal(long id);
 }

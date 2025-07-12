@@ -37,7 +37,8 @@ public class SpringSecurityConfig {
                                 "/user-account/get-by-id",
                                 "/user-account/get-all",
                                 "/user-address/**",
-                                "/user-detail/**"
+                                "/user-detail/**",
+                                "/product/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

@@ -36,7 +36,7 @@ public class ProductController {
     })
     @PostMapping("/{categoryId}/create")
     public ResponseEntity<ProductSaveResponse> save(@PathVariable long categoryId, @RequestBody ProductSaveRequest request) {
-        final Category category = categoryService.findByIdInternal();
+        final Category category = categoryService.findByIdInternal(categoryId);
         final ProductSaveResponse response = productService.save(request, category);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
